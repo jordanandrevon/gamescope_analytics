@@ -124,10 +124,23 @@ def main():
 
     if os.path.exists(FICHIER_SORTIE):
         enrichi = pd.read_csv(FICHIER_SORTIE)
+
+        enrichi["appid"] = pd.to_numeric(
+            enrichi["appid"], errors="coerce"
+        )
+        enrichi = enrichi.dropna(subset=["appid"])
+        enrichi["appid"] = enrichi["appid"].astype(int)
+
+        # Ne conserver que les jeux du catalogue actuel
+        enrichi = enrichi[
+            enrichi["appid"].isin(jeux["appid"])
+        ]
+
         deja_traites = set(
-            pd.to_numeric(
-                enrichi["appid"], errors="coerce"
-            ).dropna().astype(int)
+            enrichi.loc[
+                enrichi["statut_collecte"] == "ok",
+                "appid"
+            ]
         )
         resultats = enrichi.to_dict("records")
     else:
@@ -139,6 +152,8 @@ def main():
 
     nouveaux = 0
 
+    compteur_test = 0
+
     for position, (_, jeu) in enumerate(
         jeux.iterrows(), start=1
     ):
@@ -146,7 +161,7 @@ def main():
 
         if appid in deja_traites:
             continue
-
+       
         details = appeler_api({
             "request": "appdetails",
             "appid": appid
@@ -167,9 +182,16 @@ def main():
             )
             ligne["statut_collecte"] = "ok"
 
+            # Marquer comme traité uniquement en cas de succès
+            deja_traites.add(appid)
+
+        resultats = [
+            r for r in resultats
+            if int(r["appid"]) != appid
+        ]
         resultats.append(ligne)
-        deja_traites.add(appid)
         nouveaux += 1
+        compteur_test += 1
 
         if nouveaux % SAUVEGARDE_TOUTES_LES == 0:
             pd.DataFrame(resultats).to_csv(
@@ -178,8 +200,8 @@ def main():
                 encoding="utf-8-sig"
             )
             print(
-                f"Progression : {len(deja_traites)} "
-                f"jeux traités sur {len(jeux)}."
+                f"Progression : {nouveaux} nouvelles tentatives ; "
+                f"{len(deja_traites)} jeux réussis sur {len(jeux)}."
             )
 
         time.sleep(TAILLE_PAUSE)
