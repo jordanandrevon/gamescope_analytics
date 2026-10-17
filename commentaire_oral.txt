@@ -1,0 +1,133 @@
+# Notes pour l'oral — GameScope Analytics
+
+*Objectif : environ 12 minutes au total. Les textes sont des repères : tu peux les reformuler librement pendant la présentation.*
+
+---
+
+## Diapositive 1 — Présentation du projet
+**Durée indicative : 30 secondes**
+
+Bonjour à tous. Aujourd'hui, je vais vous présenter mon projet GameScope Analytics, réalisé dans le cadre de ma formation Data Analyst chez Simplon.
+
+L'objectif était de construire un pipeline de données complet, depuis la récupération de données via une API jusqu'à leur exploitation dans un tableau de bord interactif.
+
+J'ai choisi l'univers du jeu vidéo et plus particulièrement le catalogue Steam, afin d'étudier la popularité des jeux, leur activité et les avis des joueurs.
+
+## Diapositive 2 — Contexte et problématique métier
+**Durée indicative : 1 minute**
+
+Pour ce projet, j'ai imaginé une entreprise fictive appelée GameScope Analytics. Elle souhaite mieux comprendre le catalogue Steam pour identifier les jeux qui se distinguent par leur popularité, leur activité et leur réception auprès des joueurs.
+
+La question métier que je me suis posée est la suivante : quels jeux et quels profils de jeux se distinguent selon ces différents indicateurs ?
+
+L'idée n'était donc pas simplement de récupérer des données, mais de les transformer en informations compréhensibles et utiles pour l'analyse.
+
+Pour répondre à cette question, j'ai construit une chaîne de traitement allant de la collecte à la visualisation, avec plusieurs étapes de contrôle pour fiabiliser les données.
+
+## Diapositive 3 — Architecture du pipeline
+**Durée indicative : 1 minute**
+
+Le projet suit une architecture classique de traitement de données.
+
+Tout commence avec l'API SteamSpy, qui fournit des informations sur les jeux Steam. J'utilise ensuite Python et pandas pour collecter, transformer et préparer les données au format CSV.
+
+Les données nettoyées sont ensuite importées dans BigQuery, qui me permet de les stocker et de réaliser des analyses avec SQL.
+
+Enfin, Looker Studio se connecte à cette table pour présenter les résultats sous forme de KPI et de graphiques interactifs.
+
+Chaque outil a donc un rôle précis : Python pour la collecte et la préparation, BigQuery pour le stockage et l'analyse SQL, puis Looker Studio pour restituer les résultats.
+
+## Diapositive 4 — Collecte des données avec Python
+**Durée indicative : 1 minute 15**
+
+J'ai développé un script Python pour interroger l'API SteamSpy et récupérer les informations du catalogue.
+
+Le script gère plusieurs situations susceptibles de se produire lors d'une collecte : les erreurs de requête, les réponses temporaires de l'API et les nouvelles tentatives en cas d'échec.
+
+J'ai également ajouté une temporisation entre les appels et des sauvegardes intermédiaires pour limiter les risques de perdre le travail déjà effectué.
+
+Le mécanisme de reprise permet de ne pas retraiter les jeux déjà collectés avec succès. C'est important, car une collecte complète peut être longue.
+
+Au terme de cette étape, j'ai obtenu un fichier enrichi contenant 2 000 jeux. Ce résultat constitue la base de travail de la suite du pipeline.
+
+## Diapositive 5 — Qualité des données
+**Durée indicative : 1 minute 15**
+
+Récupérer des données ne suffit pas : il faut aussi vérifier qu'elles sont exploitables.
+
+J'ai donc contrôlé l'identifiant unique de chaque jeu, appelé appid, afin de détecter et supprimer les doublons. J'ai également vérifié les types de données et les valeurs manquantes.
+
+Après préparation, le fichier utilisé pour l'importation dans BigQuery contient 1 975 jeux, avec 1 975 identifiants uniques. Six jeux ont un genre manquant.
+
+Il est important de distinguer les deux volumes : les 2 000 jeux correspondent au fichier enrichi par le script Python, tandis que les 1 975 jeux correspondent au catalogue nettoyé chargé dans BigQuery.
+
+Cette différence illustre une étape essentielle du projet : les données exploitées dans le tableau de bord doivent être cohérentes avec le périmètre réellement analysé.
+
+## Diapositive 6 — BigQuery et SQL
+**Durée indicative : 1 minute 15**
+
+J'ai ensuite importé le catalogue nettoyé dans BigQuery, dans un dataset nommé gamescope_analytics et une table appelée jeux_steam.
+
+J'ai préparé trois requêtes SQL pour répondre à différents besoins d'analyse.
+
+La première permet d'identifier les combinaisons de genres les plus fréquentes dans le catalogue.
+
+La deuxième classe les jeux à partir de la borne basse de leur fourchette estimée de propriétaires. J'ai choisi cette valeur pour adopter une approche prudente.
+
+La troisième calcule le taux d'avis positifs pour les jeux disposant d'au moins 100 évaluations, afin d'éviter de mettre en avant un jeu sur la base de seulement quelques avis.
+
+Une limite importante doit être rappelée : les propriétaires fournis par SteamSpy sont des estimations. Ils ne correspondent ni à des ventes officielles ni à un nombre exact de joueurs.
+
+## Diapositive 7 — Automatisation
+**Durée indicative : 1 minute**
+
+Pour rendre la collecte reproductible, j'ai créé un fichier batch Windows qui lance le script Python et redirige sa sortie vers un journal d'exécution.
+
+J'ai ensuite configuré le Planificateur de tâches Windows pour exécuter la collecte chaque dimanche à 10 heures.
+
+Le script conserve également des informations sur les erreurs et évite de retraiter les jeux déjà collectés avec succès.
+
+J'ai testé le fonctionnement de la tâche manuellement : le catalogue contenait déjà 2 000 jeux traités et l'exécution s'est terminée sans nouvel enrichissement.
+
+Il reste toutefois une limite : cette automatisation dépend de la disponibilité de mon ordinateur et de sa connexion Internet. De plus, la collecte Python et le chargement dans BigQuery restent deux étapes distinctes.
+
+## Diapositive 8 — Tableau de bord Looker Studio
+**Durée indicative : 1 minute 30**
+
+J'ai organisé le tableau de bord en trois pages pour éviter de présenter toutes les informations sur un seul écran.
+
+La première page donne une vue d'ensemble du catalogue, avec le nombre de jeux analysés, le cumul des valeurs de joueurs simultanés et les avis positifs. Elle permet également de comparer les genres et les jeux selon leur popularité estimée.
+
+La deuxième page approfondit les relations entre la popularité estimée et l'activité simultanée. Elle présente aussi la répartition des avis positifs et négatifs et un tableau des jeux les mieux évalués, avec un minimum de 100 avis.
+
+Enfin, la troisième page se concentre sur les prix : prix moyen, nombre de jeux gratuits et payants, prix minimum et maximum hors jeux gratuits, répartition par catégories de prix et taux global d'avis positifs.
+
+J'ai ajouté des filtres interactifs et varié les visualisations afin que le tableau de bord soit à la fois lisible et utile pour explorer les données.
+
+## Diapositive 9 — Résultats et enseignements
+**Durée indicative : 1 minute 15**
+
+Plusieurs résultats ressortent de cette analyse.
+
+Sur les 1 975 jeux chargés dans BigQuery, 1 515 sont payants et 460 gratuits. Le prix moyen affiché est de 16 euros, avec des prix observés allant de 0,49 à 69,99 euros pour les jeux payants.
+
+Le taux global d'avis positifs atteint 86,54 %. Il s'agit d'un taux calculé à partir du total des avis positifs et négatifs, et non de la moyenne des taux individuels de chaque jeu.
+
+L'analyse montre également qu'une forte popularité estimée ne signifie pas nécessairement une activité simultanée élevée.
+
+Ces résultats décrivent le catalogue étudié et les données disponibles au moment de la collecte. Ils ne permettent pas, à eux seuls, d'expliquer pourquoi un jeu fonctionne mieux qu'un autre ni de généraliser à l'ensemble du marché du jeu vidéo.
+
+## Diapositive 10 — Recommandations et remerciements
+**Durée indicative : 1 minute**
+
+Pour aller plus loin, je vois plusieurs pistes d'amélioration.
+
+La première serait de suivre les indicateurs dans le temps, afin d'observer l'évolution de la popularité et de l'activité des jeux plutôt que de travailler uniquement sur une photographie du catalogue.
+
+Je pourrais également améliorer la catégorisation des genres, car certaines valeurs correspondent à des combinaisons de plusieurs genres, et renforcer le contrôle des données manquantes.
+
+Enfin, une évolution technique intéressante serait d'automatiser aussi le chargement dans BigQuery, pour aller vers un pipeline encore plus autonome.
+
+Ce projet m'a permis de mettre en pratique plusieurs étapes du travail d'un Data Analyst : collecte, préparation, contrôle qualité, requêtes SQL et visualisation. Il m'a aussi permis de comprendre l'importance de documenter les limites des données et de ne pas surinterpréter les résultats.
+
+Merci pour votre attention. Je suis maintenant disponible pour répondre à vos questions.
