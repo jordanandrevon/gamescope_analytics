@@ -1,8 +1,8 @@
-\# GameScope Analytics
+# GameScope Analytics
 
 
 
-\## 1. Présentation du projet
+## 1. Présentation du projet
 
 
 
@@ -14,31 +14,31 @@ L'objectif est de collecter des données publiques, de les nettoyer et de les st
 
 
 
-\*\*Problématique métier :\*\* comment analyser le catalogue Steam afin d'identifier les jeux les plus populaires, les tendances par genre et les titres bénéficiant des meilleurs retours des joueurs ?
+**Problématique métier :** comment analyser le catalogue Steam afin d'identifier les jeux les plus populaires, les tendances par genre et les titres bénéficiant des meilleurs retours des joueurs ?
 
 
 
-\## 2. Sources de données
+## 2. Sources de données
 
 
 
-Les données proviennent de l'API publique \*\*SteamSpy\*\* :
+Les données proviennent de l'API publique **SteamSpy** :
 
 
 
-\- Documentation et accès : https://steamspy.com/api.php
+- Documentation et accès : https://steamspy.com/api.php
 
-\- Périmètre : catalogue de jeux Steam.
+- Périmètre : catalogue de jeux Steam.
 
-\- Indicateurs utilisés : genres, prix, évaluations positives et négatives, estimations du nombre de propriétaires et joueurs simultanés.
-
-
-
-Les valeurs de propriétaires fournies par SteamSpy sont des \*\*estimations\*\*, et non des chiffres de ventes réels. Les joueurs simultanés représentent un indicateur d'activité, pas le nombre total de joueurs.
+- Indicateurs utilisés : genres, prix, évaluations positives et négatives, estimations du nombre de propriétaires et joueurs simultanés.
 
 
 
-\## 3. Architecture du projet
+Les valeurs de propriétaires fournies par SteamSpy sont des **estimations**, et non des chiffres de ventes réels. Les joueurs simultanés représentent un indicateur d'activité, pas le nombre total de joueurs.
+
+
+
+## 3. Architecture du projet
 
 
 
@@ -46,13 +46,13 @@ Le pipeline de données suit les étapes suivantes :
 
 
 
-1\. \*\*Collecte :\*\* récupération des données depuis SteamSpy avec Python.
+1. **Collecte :** récupération des données depuis SteamSpy avec Python.
 
-2\. \*\*Préparation :\*\* nettoyage, contrôle des valeurs, suppression des doublons et transformation des données.
+2. **Préparation :** nettoyage, contrôle des valeurs, suppression des doublons et transformation des données.
 
-3\. \*\*Stockage et analyse :\*\* importation des données dans BigQuery et exécution de requêtes SQL.
+3. **Stockage et analyse :** importation des données dans BigQuery et exécution de requêtes SQL.
 
-4\. \*\*Visualisation :\*\* création d'un tableau de bord interactif avec Looker Studio.
+4. **Visualisation :** création d'un tableau de bord interactif avec Looker Studio.
 
 
 
@@ -60,23 +60,23 @@ Le pipeline de données suit les étapes suivantes :
 
 API SteamSpy
 
-&#x20;   ↓
+    ↓
 
 Python : collecte et nettoyage
 
-&#x20;   ↓
+    ↓
 
 Fichiers CSV
 
-&#x20;   ↓
+    ↓
 
 Google BigQuery
 
-&#x20;   ↓
+    ↓
 
 Requêtes SQL
 
-&#x20;   ↓
+    ↓
 
 Looker Studio
 
@@ -84,41 +84,41 @@ Looker Studio
 
 
 
-\## 4. Technologies utilisées
+## 4. Technologies utilisées
 
 
 
-\- \*\*Python\*\* : collecte et préparation des données.
+- **Python** : collecte et préparation des données.
 
-\- \*\*Pandas\*\* : manipulation et nettoyage des données.
+- **Pandas** : manipulation et nettoyage des données.
 
-\- \*\*Jupyter Notebook\*\* : exploration et documentation des analyses.
+- **Jupyter Notebook** : exploration et documentation des analyses.
 
-\- \*\*Google BigQuery\*\* : stockage et interrogation des données avec SQL.
+- **Google BigQuery** : stockage et interrogation des données avec SQL.
 
-\- \*\*Looker Studio\*\* : visualisation des indicateurs.
+- **Looker Studio** : visualisation des indicateurs.
 
-\- \*\*Git et GitHub\*\* : versionnement et partage du projet.
-
-
-
-\## 5. Structure du dépôt
+- **Git et GitHub** : versionnement et partage du projet.
 
 
 
-\- `collecte\_steamspy.py` : script de collecte des données.
-
-\- `GameScopeAnalitycs.ipynb` : notebook d'exploration et d'analyse.
-
-\- `gamescope\_catalogue\_jeux.csv` : jeu de données nettoyé utilisé pour l'analyse.
-
-\- `lancer\_collecte.bat` : fichier de lancement de la collecte sous Windows.
-
-\- `.gitignore` : liste des fichiers exclus du versionnement.
+## 5. Structure du dépôt
 
 
 
-\## 6. Analyses SQL
+- `collecte_steamspy.py` : script de collecte des données.
+
+- `GameScopeAnalitycs.ipynb` : notebook d'exploration et d'analyse.
+
+- `gamescope_catalogue_jeux.csv` : jeu de données nettoyé utilisé pour l'analyse.
+
+- `lancer_collecte.bat` : fichier de lancement de la collecte sous Windows.
+
+- `.gitignore` : liste des fichiers exclus du versionnement.
+
+
+
+## 6. Analyses SQL
 
 
 
@@ -126,11 +126,11 @@ Les analyses réalisées dans BigQuery portent notamment sur :
 
 
 
-\- La répartition des jeux selon les combinaisons de genres.
+- La répartition des jeux selon les combinaisons de genres.
 
-\- Les jeux ayant les estimations de propriétaires les plus élevées.
+- Les jeux ayant les estimations de propriétaires les plus élevées.
 
-\- Les jeux ayant la plus forte proportion d'avis positifs, avec un minimum d'avis afin de limiter les résultats peu représentatifs.
+- Les jeux ayant la plus forte proportion d'avis positifs, avec un minimum d'avis afin de limiter les résultats peu représentatifs.
 
 
 
@@ -138,39 +138,39 @@ Les résultats doivent être interprétés en tenant compte des limites des donn
 
 
 
-\## 7. Installation et exécution
+## 7. Installation et exécution
 
 
 
-\### Prérequis
+### Prérequis
 
 
 
-\- Python installé sur Windows.
+- Python installé sur Windows.
 
-\- Git.
+- Git.
 
-\- Les bibliothèques Python nécessaires au script.
+- Les bibliothèques Python nécessaires au script.
 
-\- Un projet Google Cloud configuré pour BigQuery, avec les droits nécessaires.
+- Un projet Google Cloud configuré pour BigQuery, avec les droits nécessaires.
 
 
 
-\### Récupérer le projet
+### Récupérer le projet
 
 
 
 ```bash
 
-git clone https://github.com/jordanandrevon/gamescope\_analytics.git
+git clone https://github.com/jordanandrevon/gamescope_analytics.git
 
-cd gamescope\_analytics
+cd gamescope_analytics
 
 ```
 
 
 
-\### Installer les dépendances
+### Installer les dépendances
 
 
 
@@ -178,15 +178,15 @@ Les dépendances exactes seront précisées dans un fichier `requirements.txt` a
 
 
 
-\### Lancer la collecte
+### Lancer la collecte
 
 
 
-Sous Windows, le fichier `lancer\_collecte.bat` permet de démarrer le script de collecte. Son chemin Python doit être adapté à l'environnement de l'ordinateur utilisé.
+Sous Windows, le fichier `lancer_collecte.bat` permet de démarrer le script de collecte. Son chemin Python doit être adapté à l'environnement de l'ordinateur utilisé.
 
 
 
-\## 8. Automatisation et qualité des données
+## 8. Automatisation et qualité des données
 
 
 
@@ -198,17 +198,17 @@ Les contrôles de qualité comprennent notamment :
 
 
 
-\- La vérification de l'unicité de l'identifiant `appid`.
+- La vérification de l'unicité de l'identifiant `appid`.
 
-\- Le contrôle des valeurs manquantes.
+- Le contrôle des valeurs manquantes.
 
-\- La conversion des types et la préparation des indicateurs.
+- La conversion des types et la préparation des indicateurs.
 
-\- La distinction entre données observées et données estimées.
+- La distinction entre données observées et données estimées.
 
 
 
-\## 9. Tableau de bord
+## 9. Tableau de bord
 
 
 
@@ -220,21 +220,21 @@ Le lien du tableau de bord sera ajouté ici une fois sa publication et ses droit
 
 
 
-\## 10. Limites
+## 10. Limites
 
 
 
-\- Les estimations de propriétaires ne constituent pas des données de ventes officielles.
+- Les estimations de propriétaires ne constituent pas des données de ventes officielles.
 
-\- Les résultats dépendent du périmètre de collecte et de la disponibilité de l'API.
+- Les résultats dépendent du périmètre de collecte et de la disponibilité de l'API.
 
-\- Les genres peuvent être fournis sous forme de combinaisons de plusieurs catégories.
+- Les genres peuvent être fournis sous forme de combinaisons de plusieurs catégories.
 
-\- Les résultats décrivent le périmètre étudié et ne représentent pas nécessairement l'ensemble du marché du jeu vidéo.
+- Les résultats décrivent le périmètre étudié et ne représentent pas nécessairement l'ensemble du marché du jeu vidéo.
 
 
 
-\## 11. Auteur
+## 11. Auteur
 
 
 
